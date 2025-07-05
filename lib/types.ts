@@ -34,4 +34,9 @@ export interface Menu {
   isActive: boolean
   createdAt: Date
   updatedAt: Date
+  showPrices?: boolean
+  showDescriptions?: boolean
+  showImages?: boolean
+  allowSharing?: boolean
+  customFooter?: string
 }

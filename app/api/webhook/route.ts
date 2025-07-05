@@ -4,7 +4,7 @@ import { doc, updateDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-06-20",
+  apiVersion: "2025-06-30.basil",
 })
 
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!
@@ -30,6 +30,33 @@ export async function POST(request: NextRequest) {
       try {
         await updateDoc(doc(db, "restaurants", restaurantId), {
           isPremium: true,
+          trialStartDate: new Date(),
+          updatedAt: new Date(),
+        })
+      } catch (error) {
+        console.error("Error updating restaurant premium status:", error)
+      }
+    }
+  }
+
+  if (event.type === "customer.subscription.trial_will_end") {
+    const subscription = event.data.object as Stripe.Subscription
+    const restaurantId = subscription.metadata?.restaurantId
+
+    if (restaurantId) {
+      // You could send an email notification here about trial ending
+      console.log(`Trial ending for restaurant: ${restaurantId}`)
+    }
+  }
+
+  if (event.type === "customer.subscription.deleted") {
+    const subscription = event.data.object as Stripe.Subscription
+    const restaurantId = subscription.metadata?.restaurantId
+
+    if (restaurantId) {
+      try {
+        await updateDoc(doc(db, "restaurants", restaurantId), {
+          isPremium: false,
           updatedAt: new Date(),
         })
       } catch (error) {
