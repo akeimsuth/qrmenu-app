@@ -18,5 +18,8 @@ export const createCheckoutSession = async (restaurantId: string) => {
     throw new Error("Failed to create checkout session")
   }
 
-  return response.json()
+  const { sessionId } = await response.json()
+  
+  // Return the session URL for direct redirect
+  return `/api/redirect-to-checkout?sessionId=${sessionId}`
 }
