@@ -20,7 +20,7 @@ export default function PublicMenuPage() {
     loadMenuData()
   }, [slug])
 
-  function formatFirestoreDate(timestamp) {
+  function formatFirestoreDate(timestamp: any) {
     if (!timestamp || typeof timestamp.toDate !== "function") {
       console.warn("Invalid Firestore Timestamp:", timestamp);
       return "";
@@ -143,7 +143,7 @@ export default function PublicMenuPage() {
                         <div key={item.id} className="p-6 hover:bg-gray-50 transition-colors">
                           <div className="flex gap-4">
                             {/* Item Image */}
-                            {item.imageUrl && (
+                            {menu.showImages !== false && item.imageUrl && (
                               <div className="flex-shrink-0">
                                 <img
                                   src={item.imageUrl || "/placeholder.svg"}
@@ -161,18 +161,20 @@ export default function PublicMenuPage() {
                               <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                   <h3 className="font-semibold text-lg mb-1">{item.name}</h3>
-                                  {item.description && (
+                                  {menu.showDescriptions !== false && item.description && (
                                     <p className="text-gray-600 text-sm mb-2 leading-relaxed">{item.description}</p>
                                   )}
                                 </div>
-                                <div className="ml-4 flex-shrink-0">
-                                  <span
-                                    className="text-xl font-bold px-3 py-1 rounded-full text-white"
-                                    style={{ backgroundColor: restaurant.themeColor }}
-                                  >
-                                    ${item.price.toFixed(2)}
-                                  </span>
-                                </div>
+                                {menu.showPrices !== false && (
+                                  <div className="ml-4 flex-shrink-0">
+                                    <span
+                                      className="text-xl font-bold px-3 py-1 rounded-full text-white"
+                                      style={{ backgroundColor: restaurant.themeColor }}
+                                    >
+                                      ${item.price.toFixed(2)}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -188,9 +190,18 @@ export default function PublicMenuPage() {
 
         {/* Footer */}
         <div className="text-center mt-12 py-8 border-t">
-          <p className="text-gray-600 text-sm">
-            Powered by <span className="font-semibold">QRMenu</span>
-          </p>
+          {menu.customFooter ? (
+            <div className="space-y-2">
+              <p className="text-gray-600 text-sm">{menu.customFooter}</p>
+              {/* <p className="text-gray-400 text-xs">
+                Powered by <span className="font-semibold">QRMenu</span>
+              </p> */}
+            </div>
+          ) : (
+            <p className="text-gray-600 text-sm">
+              Powered by <span className="font-semibold">QRMenu</span>
+            </p>
+          )}
         </div>
       </main>
     </div>
